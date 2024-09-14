@@ -1,6 +1,7 @@
 # **Yang-Mills-Simulation**
 
 **Alumnos:** *Miguel Escobar & Sebastián P. Pincheira*.
+
 **Tutor**: *Avelio Sepúlveda*. 
 
 Proyecto final del ramo Simulación Estocástica - Teoría y Laboratorio de la FCFM, versión Primavera 2024
