@@ -12,11 +12,17 @@ end
 end
 
 @agent struct Face(GridAgent{2})
-	value::Float64
+	energy_value::Float64
 end
 
 @multiagent Element(Edge, Vertex, Face) <: AbstractAgent
 
+
+function update_value!(face, model)
+	@assert variant(face) isa Face
+	β = model.β
+	face.energy_value = -β*cos(sum([edge.angle for edge in nearby_agents(face, model, 1)]))
+end
 
 """
 yang_mills_step!(agent, model)
@@ -76,8 +82,6 @@ function initialize_model(height::Int, width::Int, β::Float64)
 
 	# We add the vertices
 	for (i, j) in product(2 .* (1:height) .- 1, 2 .* (1:width) .- 1)
-		# agent = Element(Vertex(model, (i, j)))
-		# add_agent_own_pos!(agent, model)
 		add_agent!((i,j), constructor(Element, Vertex), model)
 	end
 
@@ -89,15 +93,11 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	)
 	)
 	for (i, j) in edge_positions
-		# agent = Element(Edge(model, (i, j), 1.0))
-		# add_agent_own_pos!(agent, model)
-		add_agent!((i,j), constructor(Element, Edge), model; angle=0.0)
+		add_agent!((i,j), constructor(Element, Edge), model; angle=1.0)
 	end
 
 	# We add the faces initialized with value 1.0
 	for (i, j) in product(2 .* (1:height-1), 2 .* (1:width-1))
-		# agent = Element(Face(model, (i, j), 1.0))
-		# add_agent_own_pos!(agent, model)
 		add_agent!((i,j), constructor(Element, Face), model; value=1.0)
 	end
 
@@ -107,10 +107,9 @@ end
 model = initialize_model(10, 10, 5.0)
 step!(model, 100)
 
-# Plotting
+# Plottinga
 agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : "#FFFF00"
 figure, _ = abmplot(model; agent_color = agent_color)
-# figure # returning the figure displays it
 arrows!(
 	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
 	[Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge]
