@@ -42,6 +42,9 @@ function initialize_model(height, width, β)
         scheduler = Schedulers.ByKind((:Edge,))
     )
 
+    # TODO: Initialize agents with correct order of face, edge, and vertex.
+
     return model
 end
 
+# TODO: Implement a visualization routine (preferrably in another file)
