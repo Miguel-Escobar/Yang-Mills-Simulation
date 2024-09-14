@@ -28,7 +28,6 @@ function yang_mills_boltzmann(
         Interval(0.0, 2π)
         )
 	samples = sample(pdf, n_samples)
-	println(typeof(samples))
 
 	return samples
 end

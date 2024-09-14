@@ -1,6 +1,7 @@
 using Agents
 using IterTools
-using CairoMakie # choosing a plotting backend
+using GLMakie # GLMakie permite interactividad
+
 include("U1_dist.jl")
 
 @agent struct Edge(GridAgent{2})
@@ -30,13 +31,13 @@ conditional on the values of the edges in the faces that share the edge.
 # Returns
 - `nothing`
 """
-function yang_mills_step!(agent, model)::Nothing
+function yang_mills_step!(agent, model)::Nothing # Aquí podemos implementar multiple dispatch como en el tutorial (osea una que acepte ::Edge, otra que acepte ::Face, ::Vertex)
 	β = model.β
 	if variant(agent) isa Edge
 		face_values = []
 		for neighbour in nearby_agents(agent, model, 1)
 			if variant(neighbour) isa Face
-				face_members = SVector{10, Float64}(
+				face_members = SVector{3, Float64}(
 					[other_edge.angle for other_edge in nearby_agents(neighbour, model, 1) if other_edge != agent]
 				) # Ineficiente pero no se me ocurre cómo pitearme el agente propio sin sacarlo primero de la lista.
 				push!(face_values, face_members)
@@ -44,6 +45,7 @@ function yang_mills_step!(agent, model)::Nothing
 		end
 		agent.angle = yang_mills_boltzmann(face_values..., β)[1] # Aprovecho Multiple Dispatch. Slay!
 	end
+	return nothing
 end
 
 """
@@ -69,14 +71,14 @@ function initialize_model(height::Int, width::Int, β::Float64)
 		Element,
 		space;
 		(agent_step!) = yang_mills_step!, properties,
-		container = Vector,
-		scheduler = Schedulers.ByKind((:Edge,)),
-	)
+		container = Vector
+	) # TODO: Ver cómo hacer que el Scheduler sólo pesque a los edges (que son todo lo que nos interesa)
 
 	# We add the vertices
 	for (i, j) in product(2 .* (1:height) .- 1, 2 .* (1:width) .- 1)
-		agent = Element(Vertex(model, (i, j)))
-		add_agent_own_pos!(agent, model)
+		# agent = Element(Vertex(model, (i, j)))
+		# add_agent_own_pos!(agent, model)
+		add_agent!((i,j), constructor(Element, Vertex), model)
 	end
 
 	# We add the edges initialized with angle 1.0
@@ -87,23 +89,27 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	)
 	)
 	for (i, j) in edge_positions
-		agent = Element(Edge(model, (i, j), 1.0))
-		add_agent_own_pos!(agent, model)
+		# agent = Element(Edge(model, (i, j), 1.0))
+		# add_agent_own_pos!(agent, model)
+		add_agent!((i,j), constructor(Element, Edge), model; angle=0.0)
 	end
 
 	# We add the faces initialized with value 1.0
 	for (i, j) in product(2 .* (1:height-1), 2 .* (1:width-1))
-		agent = Element(Face(model, (i, j), 1.0))
-		add_agent_own_pos!(agent, model)
+		# agent = Element(Face(model, (i, j), 1.0))
+		# add_agent_own_pos!(agent, model)
+		add_agent!((i,j), constructor(Element, Face), model; value=1.0)
 	end
 
 	return model
 end
 
-model = initialize_model(2, 2, 1.0)
-
+model = initialize_model(2, 2, 5.0)
+step!(model, 100)
 # Plotting
 figure, _ = abmplot(model)
-figure # returning the figure displays it
+# figure # returning the figure displays it
+arrows!([Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge], [Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge])
+figure
 
-# TODO: Implement a visualization routine (preferrably in another file)
+# TODO: Hay que ver si esto tiene sentido. Y visualizarlo mejor! Pero en otro archivo...
