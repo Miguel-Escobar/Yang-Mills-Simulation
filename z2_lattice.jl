@@ -20,7 +20,7 @@ function yang_mills_step!(agent, model)
         face_values = []
         for neighbour in nearby_agents(agent, model, 1)
             if variant(neighbour) isa Face
-                face_members = SVector{10, Float64}([other_edge.value for other_edge in nearby_agents(neighbour, model, 1) if other_edge != agent]) # Ineficiente pero no se me ocurre cómo pitearme el agente propio sin sacarlo primero de la lista.
+                face_members = SVector{10, Float64}([other_edge.angle for other_edge in nearby_agents(neighbour, model, 1) if other_edge != agent]) # Ineficiente pero no se me ocurre cómo pitearme el agente propio sin sacarlo primero de la lista.
                 push!(face_values, face_members)
             end
         end
@@ -41,6 +41,7 @@ function initialize_model(height, width, β)
         container = Vector,
         scheduler = Schedulers.ByKind((:Edge,))
     )
+
     return model
 end
 
