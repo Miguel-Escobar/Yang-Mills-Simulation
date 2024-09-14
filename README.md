@@ -19,4 +19,4 @@ Sebastian P. Pincheira - [sebastian.pincheira@ug.uchile.cl](mailto:sebastian.pin
 Miguel Escobar - 
 
 ## Referencias
-1. Chatterjee, S. (2018). *Yang–Mills for Probabilists*. arXiv:1803.01950 [math.PR]. Available at http://arxiv.org/abs/1803.01950.
+1. Chatterjee, S. (2018). *Yang-Mills for Probabilists*. arXiv:1803.01950 [math.PR]. Available at https://arxiv.org/abs/1803.01950.
