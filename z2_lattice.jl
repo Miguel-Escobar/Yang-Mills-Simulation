@@ -11,7 +11,6 @@ end
     value::Float64
 end
 
-
 function face_value(face)
 end
 
