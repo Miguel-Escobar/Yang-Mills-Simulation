@@ -104,12 +104,19 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	return model
 end
 
-model = initialize_model(2, 2, 5.0)
+model = initialize_model(10, 10, 5.0)
 step!(model, 100)
 # Plotting
-figure, _ = abmplot(model)
+# Define a color function based on the agent type
+agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : "#FFFF00"
+
+# Plot the model with the specified colors
+figure, _ = abmplot(model; agent_color = agent_color)
 # figure # returning the figure displays it
-arrows!([Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge], [Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge])
+arrows!(
+	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
+	[Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge]
+	)
 figure
 
 # TODO: Hay que ver si esto tiene sentido. Y visualizarlo mejor! Pero en otro archivo...
