@@ -106,11 +106,9 @@ end
 
 model = initialize_model(10, 10, 5.0)
 step!(model, 100)
-# Plotting
-# Define a color function based on the agent type
-agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : "#FFFF00"
 
-# Plot the model with the specified colors
+# Plotting
+agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : "#FFFF00"
 figure, _ = abmplot(model; agent_color = agent_color)
 # figure # returning the figure displays it
 arrows!(
