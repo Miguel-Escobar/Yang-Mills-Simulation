@@ -97,7 +97,8 @@ function initialize_model(height::Int, width::Int, β::Float64)
 		Element,
 		space;
 		(agent_step!) = yang_mills_step!, properties,
-		container = Vector
+		container = Vector,
+		scheduler = Schedulers.ByID()
 	) # TODO: Ver cómo hacer que el Scheduler sólo pesque a los edges (que son todo lo que nos interesa)
 
 	# We add the vertices
@@ -113,7 +114,7 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	)
 	)
 	for (i, j) in edge_positions
-		add_agent!((i,j), constructor(Element, Edge), model; angle=1.0)
+		add_agent!((i,j), constructor(Element, Edge), model; angle=pi/2)
 	end
 
 	# We add the faces initialized with value -β
@@ -124,21 +125,21 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	return model
 end
 
-model = initialize_model(100, 100, 15.0)
+model = initialize_model(100, 100, 0.1)
 step!(model, 10)
 
 # Plottinga
 agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : "#FFFF00"
-figure, _ = abmplot(model; agent_color = agent_color)
-arrows!(
+fig, ax, _ = abmplot(model; agent_color = agent_color)
+arrows!(ax,
 	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
 	[Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge]
-	)
-figure
+)
 
-fig2 = Figure()
-ax2 = Axis(fig2[1, 1])
-hist!(ax2, [face.energy_value for face in allagents(model) if variant(face) isa Face], bins=15, normalization=:pdf)
-fig2
 
+ax2 = Axis(fig[1, 2])
+hist!(ax2, [face.energy_value for face in allagents(model) if variant(face) isa Face], bins=10, normalization=:pdf)
+
+window = display(fig)
+# window2 = display(fig2)
 # TODO: Hay que ver si esto tiene sentido. Y visualizarlo mejor! Pero en otro archivo...
