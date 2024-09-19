@@ -125,11 +125,11 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	return model
 end
 
-model = initialize_model(100, 100, 0.1)
-step!(model, 10)
+model = initialize_model(100, 100, 10.0)
+step!(model, 1)
 
 # Plottinga
-agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : "#FFFF00"
+agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : agent.energy_value
 fig, ax, _ = abmplot(model; agent_color = agent_color)
 arrows!(ax,
 	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
@@ -141,5 +141,5 @@ ax2 = Axis(fig[1, 2])
 hist!(ax2, [face.energy_value for face in allagents(model) if variant(face) isa Face], bins=10, normalization=:pdf)
 
 window = display(fig)
-# window2 = display(fig2)
+
 # TODO: Hay que ver si esto tiene sentido. Y visualizarlo mejor! Pero en otro archivo...
