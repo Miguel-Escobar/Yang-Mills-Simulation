@@ -23,7 +23,7 @@ function update_value!(face::Element, model::StandardABM)
 	ordered_neighbor_ids = id_in_position.(SA[(0, -1) .+ face.pos, (1, 0) .+ face.pos, (0, 1) .+ face.pos, (-1, 0) .+ face.pos], [model])
 	signs = SA[1, 1, -1, -1]
 	face_angles = [model[i].angle * sign for (i, sign) in zip(ordered_neighbor_ids, signs)]
-	face.energy_value = -β*cos(sum(face_angles))
+	face.energy_value = -cos(sum(face_angles))
 end
 
 function partial_face_angle(face::Element, edge::Element, model::StandardABM)
@@ -92,7 +92,7 @@ The edges are initialized with an angle of 1.0. The faces are initialized with a
 function initialize_model(height::Int, width::Int, β::Float64)
 	gridsize::Tuple{Int, Int} = (2 * height - 1, 2 * width - 1)
 	space = GridSpaceSingle(gridsize; periodic = false, metric = :manhattan)
-	properties = Dict(:β => β)
+	properties = Dict([:β => β, :dimensions=>(height, width)])
 	model = StandardABM(
 		Element,
 		space;
