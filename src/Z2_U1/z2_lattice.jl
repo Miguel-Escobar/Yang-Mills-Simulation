@@ -17,7 +17,7 @@ end
 
 @multiagent Element(Edge, Vertex, Face) <: AbstractAgent
 
-function update_value!(face, model)
+function update_value!(face::Element, model::StandardABM)
 	@assert variant(face) isa Face
 	β = model.β
 	ordered_neighbor_ids = id_in_position.(SA[(0, -1) .+ face.pos, (1, 0) .+ face.pos, (0, 1) .+ face.pos, (-1, 0) .+ face.pos], [model])
@@ -50,8 +50,8 @@ conditional on the values of the edges in the faces that share the edge.
 """
 function yang_mills_step!(agent, model, ::Edge)::Nothing # Aquí podemos implementar multiple dispatch como en el tutorial (osea una que acepte ::Edge, otra que acepte ::Face, ::Vertex)
 	β = model.β
-	face_values = []
-	edge_signs = []
+	face_values::Vector{Float64} = []
+	edge_signs::Vector{Int} = []
 	for neighbour in nearby_agents(agent, model, 1)
 		if variant(neighbour) isa Face
 			partial_angle, edge_sign = partial_face_angle(neighbour, agent, model)
@@ -99,14 +99,14 @@ function initialize_model(height::Int, width::Int, β::Float64)
 		(agent_step!) = yang_mills_step!, properties,
 		container = Vector,
 		scheduler = Schedulers.ByID()
-	) # TODO: Ver cómo hacer que el Scheduler sólo pesque a los edges (que son todo lo que nos interesa)
+	) # TODO: Ver cómo controlar mejor el Scheduler
 
 	# We add the vertices
 	for (i, j) in product(2 .* (1:height) .- 1, 2 .* (1:width) .- 1)
 		add_agent!((i,j), constructor(Element, Vertex), model)
 	end
 
-	# We add the edges initialized with angle 1.0
+	# We add the edges initialized with angle pi/2
 	edge_positions = Iterators.flatten(
 		(
 		product(2 .* (1:height) .- 1, 2 .* (1:width-1)),
@@ -125,21 +125,21 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	return model
 end
 
-model = initialize_model(100, 100, 10.0)
-step!(model, 1)
+# model = initialize_model(100, 100, 10.0)
+# step!(model, 100)
 
-# Plottinga
-agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : agent.energy_value
-fig, ax, _ = abmplot(model; agent_color = agent_color)
-arrows!(ax,
-	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
-	[Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge]
-)
+# # Plottinga
+# agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : :yellow
+# fig, ax, _ = abmplot(model; agent_color = agent_color)
+# arrows!(ax,
+# 	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
+# 	[Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge]
+# )
 
 
-ax2 = Axis(fig[1, 2])
-hist!(ax2, [face.energy_value for face in allagents(model) if variant(face) isa Face], bins=10, normalization=:pdf)
+# ax2 = Axis(fig[1, 2])
+# hist!(ax2, [face.energy_value for face in allagents(model) if variant(face) isa Face], bins=10, normalization=:pdf)
 
-window = display(fig)
+# window = display(fig)
 
 # TODO: Hay que ver si esto tiene sentido. Y visualizarlo mejor! Pero en otro archivo...
