@@ -125,21 +125,24 @@ function initialize_model(height::Int, width::Int, β::Float64)
 	return model
 end
 
-# model = initialize_model(100, 100, 10.0)
-# step!(model, 100)
-
-# # Plottinga
-# agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : :yellow
-# fig, ax, _ = abmplot(model; agent_color = agent_color)
-# arrows!(ax,
-# 	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
-# 	[Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge]
-# )
 
 
-# ax2 = Axis(fig[1, 2])
-# hist!(ax2, [face.energy_value for face in allagents(model) if variant(face) isa Face], bins=10, normalization=:pdf)
 
-# window = display(fig)
+model = initialize_model(10, 10, 10.0)
+step!(model, 100)
+
+# Plottinga
+agent_color(agent) = variant(agent) isa Edge ? "#FF0000" : variant(agent) isa Vertex ? "#0000FF" : :yellow
+fig, ax, _ = abmplot(model; agent_color = agent_color)
+arrows!(ax,
+	[Point2f(edge.pos...) for edge in allagents(model) if variant(edge) isa Edge],
+	[Vec2f(cos(edge.angle), sin(edge.angle)) for edge in allagents(model) if variant(edge) isa Edge]
+)
+
+
+ax2 = Axis(fig[1, 2])
+hist!(ax2, [face.energy_value for face in allagents(model) if variant(face) isa Face], bins=10, normalization=:pdf)
+
+window = display(fig)
 
 # TODO: Hay que ver si esto tiene sentido. Y visualizarlo mejor! Pero en otro archivo...

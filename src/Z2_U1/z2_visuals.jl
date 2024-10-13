@@ -34,4 +34,6 @@ function interactive_exploration(height, width, β::Float64)
     fig
 end
 
+interactive_exploration(100, 100, 10.0)
+
 
