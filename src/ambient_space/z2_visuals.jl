@@ -16,8 +16,8 @@ function energy_array(model::StandardABM)
     return energy_matrix
 end
 
-function interactive_exploration(height, width, β::Float64)
-    model = initialize_model(height, width, β)
+function interactive_exploration(height, width, β::Float64, group)
+    model = initialize_model(height, width, β, group)
 
     params = Dict(
     :β => 0:0.1:10.0
@@ -34,6 +34,13 @@ function interactive_exploration(height, width, β::Float64)
     fig
 end
 
-interactive_exploration(100, 100, 10.0)
+# Available groups: "U1", "Zn" (n=1, 2, 3, 4, 5, 6, ...)
+
+group = "Z2"
+height = 100
+width = 100
+β = 10.0
+
+interactive_exploration(height, width , β, group)
 
 
