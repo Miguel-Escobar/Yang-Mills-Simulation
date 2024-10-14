@@ -1,8 +1,15 @@
 using GLMakie
-include("z2_lattice.jl")
+using Agents
+
+current_dir = @__DIR__
+
+z2_lattice_path = joinpath(current_dir, "z2_lattice.jl")
+include(z2_lattice_path)
+
+import .z2_lattice: initialize_model, Element, Edge, Vertex, Face
 
 function model_energy(model::StandardABM)
-    return sum(face.energy_value for face in allagents(model) if variant(face) isa Face)
+    return sum(face.energy_value for face in allagents(model) if variant(face) isa Face) # the agnet.energy_value was set to 0.0 for all non-face agents.
 end
 
 function energy_array(model::StandardABM)
@@ -37,8 +44,8 @@ end
 # Available groups: "U1", "Zn" (n=1, 2, 3, 4, 5, 6, ...)
 
 group = "Z2"
-height = 100
-width = 100
+height = 10
+width = 10
 β = 10.0
 
 interactive_exploration(height, width , β, group)

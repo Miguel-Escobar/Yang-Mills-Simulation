@@ -1,3 +1,5 @@
+module z2_lattice
+
 using Agents
 using IterTools
 using GLMakie # GLMakie permite interactividad
@@ -17,11 +19,15 @@ include(Zn_dist_path)
 import .U1_dist: U1_boltzmann
 import .Zn_dist: Zn_boltzmann
 
+export initialize_model, Element, Edge, Vertex, Face
+
 @agent struct Edge(GridAgent{2})
     angle::Float64
+    energy_value::Float64
 end
 
 @agent struct Vertex(GridAgent{2})
+    energy_value::Float64
 end
 
 @agent struct Face(GridAgent{2})
@@ -129,7 +135,7 @@ function initialize_model(height::Int, width::Int, β::Float64, group::String)
 
     # We add the vertices
     for (i, j) in product(2 .* (1:height) .- 1, 2 .* (1:width) .- 1)
-        add_agent!((i, j), constructor(Element, Vertex), model)
+        add_agent!((i, j), constructor(Element, Vertex), model; energy_value=0.0)
     end
 
     # We add the edges initialized with angle 0.0
@@ -140,7 +146,7 @@ function initialize_model(height::Int, width::Int, β::Float64, group::String)
     )
     )
     for (i, j) in edge_positions
-        add_agent!((i, j), constructor(Element, Edge), model; angle=0.0)
+        add_agent!((i, j), constructor(Element, Edge), model; angle=0.0, energy_value=0.0)
     end
 
     # We add the faces initialized with value 0.0
@@ -153,7 +159,7 @@ end
 
 
 
-main = true
+main = false
 if main
     # Available groups: "U1", "Zn" (n=1, 2, 3, 4, 5, 6, ...)
 
@@ -188,3 +194,5 @@ if main
 end
 
 # TODO: Hay que ver si esto tiene sentido. Y visualizarlo mejor! Pero en otro archivo...
+
+end
