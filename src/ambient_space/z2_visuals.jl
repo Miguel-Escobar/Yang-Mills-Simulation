@@ -1,3 +1,5 @@
+module z2_visuals
+
 using GLMakie
 using Agents
 
@@ -7,6 +9,8 @@ z2_lattice_path = joinpath(current_dir, "z2_lattice.jl")
 include(z2_lattice_path)
 
 import .z2_lattice: initialize_model, Element, Edge, Vertex, Face
+
+export interactive_exploration
 
 function model_energy(model::StandardABM)
     return sum(face.energy_value for face in allagents(model) if variant(face) isa Face) # the agnet.energy_value was set to 0.0 for all non-face agents.
@@ -41,13 +45,7 @@ function interactive_exploration(height, width, β::Float64, group)
     fig
 end
 
-# Available groups: "U1", "Zn" (n=1, 2, 3, 4, 5, 6, ...)
+end
 
-group = "Z2"
-height = 10
-width = 10
-β = 10.0
-
-interactive_exploration(height, width , β, group)
 
 
