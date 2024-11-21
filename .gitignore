@@ -26,3 +26,5 @@ Manifest.toml
 # Local environment settings
 .vscode/
 .DS_Store
+.DS_Store
+.vscode/settings.json

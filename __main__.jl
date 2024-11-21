@@ -1,5 +1,6 @@
 using ProgressMeter
-using Plots
+using CairoMakie
+plotFontsize = 30
 
 current_dir = @__DIR__
 
@@ -14,13 +15,13 @@ import .z2_Wilson_Loop: get_V_func14
 
 # Available groups: "U1", "Zn" (n=1, 2, 3, 4, 5, 6, ...)
 
-group = "Z2"
+group = "U1"
 height = 10
 width = 10
 β = 10.0
 # interactive_exploration(height, width , β, group)
 
-group = "Z3"
+group = "U1"
 height = 100
 width = 100
 β = 0.1
@@ -51,38 +52,57 @@ real_part_ratio = real_part ./ x_values  # y/x for real part
 imaginary_part_ratio = imaginary_part ./ x_values  # y/x for imaginary part
 norms_ratio = norms ./ x_values  # y/x for norms
 
-size = (1500, 1000)  # Size of the plots
-
 # Create the plots for the real part
-p1 = plot(real_part, label="Real Part", title="Real Part", xlabel="R", ylabel="Real", size=size)
-p2 = plot(real_part_ratio, label="Real Part / R", title="Real Part / R", xlabel="R", ylabel="Real / R", size=size)
+fig1 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax1 = Axis(fig1[1, 1], title = "Real Part", xlabel = "R", ylabel = "Real")
+lines!(ax1, 1:length(real_part), real_part, label = "Real Part")
+
+fig2 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax2 = Axis(fig2[1, 1], title = "Real Part / R", xlabel = "R", ylabel = "Real / R")
+lines!(ax2, 1:length(real_part_ratio), real_part_ratio, label = "Real Part / R")
 
 # Create the plots for the imaginary part
-p3 = plot(imaginary_part, label="Imaginary Part", title="Imaginary Part", xlabel="R", ylabel="Imaginary", size=size)
-p4 = plot(imaginary_part_ratio, label="Imaginary Part / R", title="Imaginary Part / R", xlabel="R", ylabel="Imaginary / R", size=size)
+fig3 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax3 = Axis(fig3[1, 1], title = "Imaginary Part", xlabel = "R", ylabel = "Imaginary")
+lines!(ax3, 1:length(imaginary_part), imaginary_part, label = "Imaginary Part")
+
+fig4 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax4 = Axis(fig4[1, 1], title = "Imaginary Part / R", xlabel = "R", ylabel = "Imaginary / R")
+lines!(ax4, 1:length(imaginary_part_ratio), imaginary_part_ratio, label = "Imaginary Part / R")
 
 # Create the plots for the norm
-p5 = plot(norms, label="Norm", title="Norm", xlabel="R", ylabel="Norm", size=size)
-p6 = plot(norms_ratio, label="Norm / R", title="Norm / R", xlabel="R", ylabel="Norm / R", size=size)
+fig5 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax5 = Axis(fig5[1, 1], title = "Norm", xlabel = "R", ylabel = "Norm")
+lines!(ax5, 1:length(norms), norms, label = "Norm")
+
+fig6 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax6 = Axis(fig6[1, 1], title = "Norm / R", xlabel = "R", ylabel = "Norm / R")
+lines!(ax6, 1:length(norms_ratio), norms_ratio, label = "Norm / R")
 
 # 7th plot: Colored scatter of the data (real part vs imaginary part) connected by a line
-p7 = plot(real_part, imaginary_part, marker_z=1:length(real_part), c=:viridis, xlabel="Real Part", ylabel="Imaginary Part", title="Colored Scatter of Data", legend=false, colorbar_title="Index", linestyle=:auto, size=size)
+fig7 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax7 = Axis(fig7[1, 1], title = "Colored Scatter of Data", xlabel = "Real Part", ylabel = "Imaginary Part")
+scatter!(ax7, real_part, imaginary_part, color = 1:length(real_part), colormap = :viridis)
+lines!(ax7, real_part, imaginary_part, color = 1:length(real_part), colormap = :viridis)
 
 # 8th plot: Colored scatter of the data divided by R (real part / R vs imaginary part / R) connected by a line
-p8 = plot(real_part_ratio, imaginary_part_ratio, marker_z=1:length(real_part_ratio), c=:viridis, xlabel="Real Part / R", ylabel="Imaginary Part / R", title="Colored Scatter of Data / R", legend=false, colorbar_title="Index", linestyle=:auto, size=size)
+fig8 = Figure(resolution = (1500, 1000), fontsize = plotFontsize)
+ax8 = Axis(fig8[1, 1], title = "Colored Scatter of Data / R", xlabel = "Real Part / R", ylabel = "Imaginary Part / R")
+scatter!(ax8, real_part_ratio, imaginary_part_ratio, color = 1:length(real_part_ratio), colormap = :viridis)
+lines!(ax8, real_part_ratio, imaginary_part_ratio, color = 1:length(real_part_ratio), colormap = :viridis)
 
 # Ensure the 'data' directory exists
 mkpath("data")
 mkpath("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)")
 
 # Save the plots to the 'data' directory
-savefig(p1, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Real Part.png")
-savefig(p2, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Real Part div R.png")
-savefig(p3, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Img Part.png")
-savefig(p4, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Img Part div R.png")
-savefig(p5, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Norm.png")
-savefig(p6, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Norm div R.png")
-savefig(p7, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/All.png")
-savefig(p8, "data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/All div R.png")
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Real Part.png", fig1)
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Real Part div R.png", fig2)
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Img Part.png", fig3)
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Img Part div R.png", fig4)
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Norm.png", fig5)
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/Norm div R.png", fig6)
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/All.png", fig7)
+save("data/$(height) x $(width) x $(β) x $(group) x $(n_samples)/All div R.png", fig8)
 
 println("Plots saved to the 'data' directory.")
