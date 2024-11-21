@@ -168,7 +168,8 @@ if main
     width = 10
     β = 1.0
 
-    model = initialize_model(height, width, β, group)
+    model = initialize_model(width, height, β, group)
+
     step!(model, 100)
 
     # Plotting
