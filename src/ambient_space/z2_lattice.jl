@@ -2,7 +2,7 @@ module z2_lattice
 
 using Agents
 using IterTools
-using GLMakie # GLMakie permite interactividad
+using CairoMakie # GLMakie permite interactividad
 using StaticArrays
 using LinearAlgebra
 
