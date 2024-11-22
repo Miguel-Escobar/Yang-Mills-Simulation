@@ -25,9 +25,9 @@ width = 10
 # interactive_exploration(height, width , β, group)
 
 group = "Z2"
-height = 10
-width = 10
-β = 0.1
+height = 20
+width = 20
+β = 5.0
 n_samples = 1000
 V_β = get_V_func14(width, height, β, group, n_samples)
 
