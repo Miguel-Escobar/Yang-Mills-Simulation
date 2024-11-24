@@ -14,9 +14,9 @@ Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archiv
 
 ## Contacto
 
-Sebastian P. Pincheira - [sebastian.pincheira@ug.uchile.cl](mailto:sebastian.pincheira@ug.uchile.cl)
+Sebastian Pincheira Echenique - [sebastian.pincheira@ug.uchile.cl](mailto:sebastian.pincheira@ug.uchile.cl)
 
-Miguel Escobar - [miguelescobar@ug.uchile.cl](mailto:miguelescobar@ug.uchile.cl)
+Miguel Escobar Mendoza - [miguelescobar@ug.uchile.cl](mailto:miguelescobar@ug.uchile.cl)
 
 ## Referencias
 1. Chatterjee, S. (2018). *Yang-Mills for Probabilists*. arXiv:1803.01950 [math.PR]. Available at https://arxiv.org/abs/1803.01950.
