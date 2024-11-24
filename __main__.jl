@@ -1,7 +1,4 @@
 using ProgressMeter
-using CairoMakie
-
-CairoMakie.activate!()
 
 plotFontsize = 30
 
@@ -54,6 +51,9 @@ x_values = [x[1] for x in _V_R_]  # Extract x (the first element) from each tupl
 real_part_ratio = real_part ./ x_values  # y/x for real part
 imaginary_part_ratio = imaginary_part ./ x_values  # y/x for imaginary part
 norms_ratio = norms ./ x_values  # y/x for norms
+
+using CairoMakie
+CairoMakie.activate!()
 
 # Create the plots for the real part
 fig1 = Figure(fontsize = plotFontsize)
