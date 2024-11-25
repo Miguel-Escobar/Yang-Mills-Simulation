@@ -28,6 +28,8 @@ function energy_array(model::StandardABM)
 end
 
 function interactive_exploration(height, width, β::Float64, group)
+    GLMakie.activate!()
+
     model = initialize_model(height, width, β, group)
 
     params = Dict(
@@ -41,7 +43,10 @@ function interactive_exploration(height, width, β::Float64, group)
     :heatkwargs => heatkwargs
     )
 
-    fig, abmobs = abmexploration(model; params=params, plotkwargs..., mdata=[model_energy], mlabel = ["Energy"])
+    agent_marker(a) = (a.pos[1] % 2 == 1 && a.pos[2] % 2 == 1) ? :circle : a.pos[1] % 2 == 1 ? :vline : a.pos[2] % 2 == 1 ? :hline : ' '
+    agent_color(a) = variant(a) isa Vertex ? :blue : :black
+
+    fig, abmobs = abmexploration(model; params=params, plotkwargs..., mlabels = ["Energy"], mdata=[model_energy], agent_marker = agent_marker, agent_color = agent_color)
     fig
 end
 
