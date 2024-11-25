@@ -1,6 +1,6 @@
 module z2_visuals
 
-using CairoMakie
+using GLMakie
 using Agents
 
 current_dir = @__DIR__
