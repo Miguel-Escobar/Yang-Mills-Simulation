@@ -37,27 +37,27 @@ function Zn_boltzmann(
     n::Int=2
 )::Vector{Float64}
 
-    # Pasamos los angulos a valores en Z/nZ en la representación clásica de los grupos cíclicos
+    # Precompute values that are constant in the loop
     first_partial_value_Zn::Float64 = first_partial_value * n / 2π
     second_partial_value_Zn::Float64 = second_partial_value * n / 2π
+    angles_offset = 2π / n
 
     # Calculate unnormalized probabilities for m = 0, 1, ..., n-1
-    probs::Vector{Float64} = [
-        exp(β * (cos(2π * (first_partial_value_Zn + edge_sign * m) / n) +
-                 cos(2π * (second_partial_value_Zn - edge_sign * m) / n))) for m in 0:n-1
-    ]
+    m_vals = 0:n-1
+    cos_vals1 = cos.(2π * (first_partial_value_Zn .+ edge_sign .* m_vals) / n)
+    cos_vals2 = cos.(2π * (second_partial_value_Zn .- edge_sign .* m_vals) / n)
+    probs = exp.(β .* (cos_vals1 .+ cos_vals2))
 
     # Normalize the probabilities to sum to 1
-    normalized_probs::Vector{Float64} = probs / sum(probs)
+    normalized_probs = probs / sum(probs)
 
-    # Use StatsBase for weighted sampling
-    items::Vector{Int} = 0:n-1
-    weights::Weights = Weights(normalized_probs)
+    # Sample from the distribution
+    items = 0:n-1
+    weights = Weights(normalized_probs)
+    samples = StatsBase.sample(items, weights, n_samples)
 
-    # Sample from the items using the weighted probabilities
-    samples::Vector{Int} = [StatsBase.sample(items, weights) for _ in 1:n_samples]
-
-    angles::Vector{Float64} = 2π .* samples ./ n
+    # Transform samples into angles
+    angles = angles_offset .* samples
 
     return angles
 end
@@ -90,22 +90,24 @@ function Zn_boltzmann(
     n::Int=2
 )::Vector{Float64}
 
+    # Precompute constant values that do not change in the loop
+    angle_offset = 2π / n
+    m_vals = 0:n-1
+
     # Calculate unnormalized probabilities for m = 0, 1, ..., n-1
-    probs::Vector{Float64} = [
-        exp(β * cos(2π * (only_partial_value + edge_sign * m) / n)) for m in 0:n-1
-    ]
+    cos_vals = cos.(2π * (only_partial_value .+ edge_sign .* m_vals) / n)
+    probs = exp.(β .* cos_vals)
 
     # Normalize the probabilities to sum to 1
-    normalized_probs::Vector{Float64} = probs / sum(probs)
+    normalized_probs = probs / sum(probs)
 
-    # Use StatsBase for weighted sampling
-    items::Vector{Int} = 0:n-1
-    weights::Weights = Weights(normalized_probs)
+    # Sample from the distribution
+    items = 0:n-1
+    weights = Weights(normalized_probs)
+    samples = StatsBase.sample(items, weights, n_samples)
 
-    # Sample from the items using the weighted probabilities
-    samples::Vector{Int} = [StatsBase.sample(items, weights) for _ in 1:n_samples]
-
-    angles::Vector{Float64} = 2π .* samples ./ n
+    # Transform samples into angles
+    angles = angle_offset .* samples
 
     return angles
 end

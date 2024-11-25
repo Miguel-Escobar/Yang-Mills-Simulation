@@ -15,7 +15,7 @@ include(z2_lattice_path)
 
 import .z2_lattice: initialize_model, Element, Edge, Vertex, Face
 
-export get_V_func14
+export get_V_func17
 
 """
 W_(gamma::Array)::Complex{Float64}
@@ -58,7 +58,7 @@ function V(model::StandardABM, R::Int, n_samples::Int = 1000)::Complex{Float64}
     T::Int = h_vertices - 1
 
     # we reach equilibrium
-    step!(model, 100)  # NO GUARANTEE OF CONVERGENCE
+    step!(model, 10)  # NO GUARANTEE OF CONVERGENCE
 
     # Use sampling from pre-allocated memory
     samples = 2 .* rand(1:v_vertices - R, n_samples) .- 1
@@ -80,7 +80,7 @@ function V(model::StandardABM, R::Int, n_samples::Int = 1000)::Complex{Float64}
         # First loop of length T
         for _ in 1:T
             position += [2, 0]
-            ID = id_in_position(position - [1, 0], model)
+            ID = id_in_position(Tuple(position - [1, 0]), model)
             edge = model[ID]
             γ[idx] = (edge, 1)
             idx += 1
@@ -88,7 +88,7 @@ function V(model::StandardABM, R::Int, n_samples::Int = 1000)::Complex{Float64}
         # Second loop of length R
         for _ in 1:R
             position += [0, 2]
-            ID = id_in_position(position - [0, 1], model)
+            ID = id_in_position(Tuple(position - [0, 1]), model)
             edge = model[ID]
             γ[idx] = (edge, 1)
             idx += 1
@@ -96,7 +96,7 @@ function V(model::StandardABM, R::Int, n_samples::Int = 1000)::Complex{Float64}
         # Third loop of length T
         for _ in 1:T
             position -= [2, 0]
-            ID = id_in_position(position + [1, 0], model)
+            ID = id_in_position(Tuple(position + [1, 0]), model)
             edge = model[ID]
             γ[idx] = (edge, -1)
             idx += 1
@@ -104,7 +104,7 @@ function V(model::StandardABM, R::Int, n_samples::Int = 1000)::Complex{Float64}
         # Fourth loop of length R
         for _ in 1:R
             position -= [0, 2]
-            ID = id_in_position(position + [0, 1], model)
+            ID = id_in_position(Tuple(position + [0, 1]), model)
             edge = model[ID]
             γ[idx] = (edge, -1)
             idx += 1
@@ -122,7 +122,7 @@ function V(model::StandardABM, R::Int, n_samples::Int = 1000)::Complex{Float64}
 end
 
 """
-get_V_func14(width:: Int, height::Int, β::Float64, group::String, n_samples::Int)::Function
+get_V_func17(width:: Int, height::Int, β::Float64, group::String, n_samples::Int)::Function
 
 Returns a function that computes the potential between a static quark and antiquark separated by distance R.
 
@@ -136,7 +136,7 @@ Returns a function that computes the potential between a static quark and antiqu
 # Returns
 - `Function`: A function that computes the potential between a static quark and antiquark separated by distance R.
 """
-function get_V_func14(width:: Int, height::Int, β::Float64, group::String, n_samples::Int)::Function
+function get_V_func17(width:: Int, height::Int, β::Float64, group::String, n_samples::Int)::Function
     model = initialize_model(width, height, β, group)
     function V_β(R::Int)::Complex{Float64}
         return V(model, R, n_samples)

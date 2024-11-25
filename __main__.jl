@@ -1,4 +1,5 @@
 using ProgressMeter
+using Random
 
 plotFontsize = 30
 
@@ -11,7 +12,7 @@ include(z2_visuals_path)
 include(z2_wilson_path)
 
 import .z2_visuals: interactive_exploration
-import .z2_Wilson_Loop: get_V_func14
+import .z2_Wilson_Loop: get_V_func17
 
 # Available groups: "U1", "Zn" (n=1, 2, 3, 4, 5, 6, ...)
 
@@ -21,15 +22,16 @@ width = 10
 β = 10.0
 # interactive_exploration(height, width , β, group)
 
-group = "Z2"
-height = 20
-width = 20
-β = 5.0
-n_samples = 1000
-V_β = get_V_func14(width, height, β, group, n_samples)
+group = "Z100"
+height = 50
+width = 50
+β = 3.0
+n_samples = 100
+V_β = get_V_func17(width, height, β, group, n_samples)
 
 # we plot Re(V), Im(V) and |V| for R_ in {1,2,..,height-1}
 R_::Vector{Int} = 1:height-1
+shuffle!(R_)  # Shuffle the order of the elements in R_
 
 V_R_progress = Progress(length(R_), 1, "Computing V(R_)...")
 _V_R_::Vector{Tuple{Int, Complex{Float64}}} = []
